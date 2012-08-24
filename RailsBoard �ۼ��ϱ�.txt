@@ -61,13 +61,7 @@ class HomeController < ApplicationController
   end
 end
 
-* views\home\index.html.erb 를 다음처럼 수정한다. 이 화면이 최초 보여지는 전체 게시물 출력 화면이다.
-
-
-
-
-
-
+* views\home\index.html.erb 를 다음처럼 수정한다. 이 화면이 최초 보여지는 전체 게시물 출력 화면이다
 
 
 
