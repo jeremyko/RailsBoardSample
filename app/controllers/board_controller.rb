@@ -77,6 +77,7 @@ class BoardController < ApplicationController
         #         FROM MY_RAILS_BOARD_ROWS  ORDER BY ID DESC ) X ) Z WHERE page = %s", rowsPerPage, @current_page]  
 
         #sqlite3
+        # at home...
         @boardList = 
             MyRailsBoardRow.find_by_sql ["SELECT z.ID,z.NAME,z.SUBJECT,z.CREATED_AT,z.MAIL,z.MEMO,z.HITS FROM(SELECT X.*, \
                 (CASE WHEN x.rowid %% %s> 0  THEN CAST (x.rowid / %s + 1 as int) ELSE CAST (x.rowid / %s as int) END) as page \
