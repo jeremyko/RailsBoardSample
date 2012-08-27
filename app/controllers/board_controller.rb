@@ -76,21 +76,21 @@ class BoardController < ApplicationController
         #     as page FROM ( SELECT ID,SUBJECT,NAME, CREATED_AT, MAIL,MEMO,HITS \
         #         FROM MY_RAILS_BOARD_ROWS  ORDER BY ID DESC ) X ) Z WHERE page = %s", rowsPerPage, @current_page]  
 
-        #sqlite3
-        # at home...
+        #sqlite3 
+        # (CASE WHEN x.rowid %% %s> 0  THEN CAST (x.rowid / %s + 1 as int) ELSE CAST (x.rowid / %s as int) END) as page
         @boardList = 
-            MyRailsBoardRow.find_by_sql ["SELECT z.ID,z.NAME,z.SUBJECT,z.CREATED_AT,z.MAIL,z.MEMO,z.HITS FROM(SELECT X.*, \
-                (CASE WHEN x.rowid %% %s> 0  THEN CAST (x.rowid / %s + 1 as int) ELSE CAST (x.rowid / %s as int) END) as page \
-                FROM ( SELECT rowid,ID,SUBJECT,NAME, CREATED_AT, MAIL,MEMO,HITS \
-                FROM MY_RAILS_BOARD_ROWS  ORDER BY ID DESC ) X) Z  WHERE page = %s", 
-                rowsPerPage,rowsPerPage,rowsPerPage, @current_page]  
+            MyRailsBoardRow.find_by_sql [
+        "select ID,SUBJECT,NAME, CREATED_AT, MAIL,MEMO,HITS from MY_RAILS_BOARD_ROWS ORDER BY id desc
+         limit %s offset %s", rowsPerPage, @current_page.to_i ==1 ? 0 : 2*(@current_page.to_i-1) ] 
+         
+        #-- 0 : 1 page
+        #-- 2 : 2 page
+        #-- 4 : 3 page
+        #-- 6 : 4 page
+        #-- 8 : 5 page
 
-        Rails.logger.warn "rowData:" + @boardList.count.to_s
+        #Rails.logger.warn "rowData:" + @boardList.count.to_s
 
-        @boardList.each do |rowData|            
-            Rails.logger.warn "rowData id:" + rowData.attributes['id']             
-            Rails.logger.warn "rowData name:" + rowData..attributes['name']
-        end                
     end
 
     ############################################################################
