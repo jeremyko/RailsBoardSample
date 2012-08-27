@@ -72,9 +72,24 @@ class BoardController < ApplicationController
         
         
         # 페이지를 가지고 범위 데이터를 조회한다 => raw SQL 사용함
-        @boardList = MyRailsBoardRow.find_by_sql ["SELECT Z.* FROM(SELECT X.*, ceil( rownum / %s ) \ 
-            as page FROM ( SELECT ID,SUBJECT,NAME, CREATED_AT, MAIL,MEMO,HITS \
-                FROM MY_RAILS_BOARD_ROWS  ORDER BY ID DESC ) X ) Z WHERE page = %s", rowsPerPage, @current_page]        
+        # @boardList = MyRailsBoardRow.find_by_sql ["SELECT Z.* FROM(SELECT X.*, ceil( rownum / %s ) \ 
+        #     as page FROM ( SELECT ID,SUBJECT,NAME, CREATED_AT, MAIL,MEMO,HITS \
+        #         FROM MY_RAILS_BOARD_ROWS  ORDER BY ID DESC ) X ) Z WHERE page = %s", rowsPerPage, @current_page]  
+
+        #sqlite3
+        @boardList = 
+            MyRailsBoardRow.find_by_sql ["SELECT z.ID,z.NAME,z.SUBJECT,z.CREATED_AT,z.MAIL,z.MEMO,z.HITS FROM(SELECT X.*, \
+                (CASE WHEN x.rowid %% %s> 0  THEN CAST (x.rowid / %s + 1 as int) ELSE CAST (x.rowid / %s as int) END) as page \
+                FROM ( SELECT rowid,ID,SUBJECT,NAME, CREATED_AT, MAIL,MEMO,HITS \
+                FROM MY_RAILS_BOARD_ROWS  ORDER BY ID DESC ) X) Z  WHERE page = %s", 
+                rowsPerPage,rowsPerPage,rowsPerPage, @current_page]  
+
+        Rails.logger.warn "rowData:" + @boardList.count.to_s
+
+        @boardList.each do |rowData|            
+            Rails.logger.warn "rowData id:" + rowData.attributes['id']             
+            Rails.logger.warn "rowData name:" + rowData..attributes['name']
+        end                
     end
 
     ############################################################################
