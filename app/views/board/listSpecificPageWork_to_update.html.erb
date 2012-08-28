@@ -34,27 +34,6 @@
    
 </script>
 
-<!--   
-장고 1.2부터 post로 값을 보내면 이런 에러가 나오는 경우가 있는데,
-CSRF 보안 때문에 추가됐다고 한다. 참고 
-
-해결방법은 post form뒤에 { % csrf_token %}을 넣어주면 된다.
-
-예) <form action="" method="post">{% csrf_token %}
-
-또는
-
-csrf보안 처리가 안된 python코드 안에 django.views.decorators.csrf.csrf_exempt를 import하고, @csrf_exempt로 데코레이션하면 된다.
-
-예)
-from django.views.decorators.csrf import csrf_exempt
-...
-@csrf_exempt
-def foo:
-
-결과는 똑같으니 뷰와 템플릿을 좀 더 분리하고 싶으면 후자를 쓰면된다.
--->
-
 <table cellspacing = 0 cellpadding = 5 border = 1 width=500>
 <form name=modifyform method=post action="/updateBoard/"> 
     <input type=hidden name=id  value="<%=@id%>">    

@@ -1,6 +1,6 @@
 module ApplicationHelper
 
-    ##############################################################################
+    #--------------------------------------------------------------------------#
     # title표시ㅣ 목적
     def full_title(page_title)
         base_title = "RailsBoard"
@@ -11,7 +11,7 @@ module ApplicationHelper
         end
     end
 
-    ##############################################################################
+    #--------------------------------------------------------------------------#
     # Paging helper
     def getTotalPageList( total_cnt, rowsPerPage )
         if ((total_cnt % rowsPerPage) == 0)

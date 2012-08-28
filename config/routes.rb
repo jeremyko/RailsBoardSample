@@ -12,13 +12,13 @@ RailsBoard::Application.routes.draw do
     match '/DoWriteBoard',  to: 'board#DoWriteBoard'
     match '/viewWork',  to: 'board#viewWork'    
     match '/listSpecificPageWork',  to: 'board#listSpecificPageWork'
-    match '/listSpecificPageWork_to_update',  to: 'board#listSpecificPageWork_to_update'    
-    match '/listSearchedSpecificPageWork',  to: 'board#listSearchedSpecificPageWork'
+    match '/listSpecificPageWork_to_update',  to: 'board#listSpecificPageWork_to_update'        
     match '/updateBoard',  to: 'board#updateBoard'    
     match '/DeleteSpecificRow',  to: 'board#DeleteSpecificRow'    
     
-        
-
+    #search
+    match '/searchWithSubject',  to: 'board#searchWithSubject'    
+    match '/listSearchedSpecificPageWork',  to: 'board#listSearchedSpecificPageWork'
   
 end
 
