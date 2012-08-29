@@ -6,11 +6,13 @@ class BoardController < ApplicationController
 
     #--------------------------------------------------------------------------#
     def index
-        #@boardList = MyRailsBoardRow.all # 전부다 조회...
-        # @boardList = MyRailsBoardRow.all(limit: rowsPerPage) 
+        #@boardList = MyRailsBoardRow.all # 전부다 조회...                        
+        #@boardList = MyRailsBoardRow.all(limit: rowsPerPage)
+
+        # @boardList = MyRailsBoardRow.find(:all, :limit => rowsPerPage, :order=> 'created_at desc')        
         # @totalCnt = MyRailsBoardRow.all.count
-        # @current_page = 1 # 최초 화면이므로 1
-        # @totalPageList = getTotalPageList( @totalCnt, rowsPerPage)
+        # @current_page = 1
+        # @totalPageList = getTotalPageList(@totalCnt, rowsPerPage)
 
         url = '/listSpecificPageWork?current_page=1'
         redirect_to url        
@@ -19,7 +21,7 @@ class BoardController < ApplicationController
     #--------------------------------------------------------------------------#
     def show_write_form
         # 객체를 생성해서 전달하고, 데이터를 담아온다.
-        @rowData = MyRailsBoardRow.new
+        #@rowData = MyRailsBoardRow.new
     end
 
     #--------------------------------------------------------------------------#
