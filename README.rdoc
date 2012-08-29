@@ -1,1 +1,1 @@
-Ruby on Rails sample message board
+Ruby on Rails sample message board - More Rails way !!
