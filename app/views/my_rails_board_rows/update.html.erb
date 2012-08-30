@@ -1,0 +1,55 @@
+<% provide(:title, '글 수정'+@rowData.name) %>
+  
+<script language="javascript">
+
+	function writeCheck() 
+	{				
+	    var form = document.modifyform;
+	
+	    if( !form.subject.value )
+	    {
+	        alert( "제목을 적어주세요" );
+	        form.subject.focus();
+	        return;
+	    }
+	    if( !form.memo.value )
+	    {
+	        alert( "내용을 적어주세요" );
+	        form.memo.focus();
+	        return;
+	    }	
+	    
+	    form.submit();
+	}
+   
+</script>
+
+
+<table cellspacing = 0 cellpadding = 5 border = 1 width=500>
+
+    <%= form_for(@rowData) do |f| %>
+    <input type=hidden name=id  value="<%=@id%>">    
+    <input type=hidden name=current_page  value="<%=@current_page%>">
+    <input type=hidden name=searchStr  value="<%=@searchStr%>">
+
+    <!-- http://guides.rubyonrails.org/layouts_and_rendering.html -->
+    <%= render :partial => "rowDataInput", :locals => { :f => f } %>    
+        
+    <table width="150">
+        <tr>
+            <td>
+                <%= f.submit "재등록", class: "btn btn-large btn-primary" %> 
+            </td>
+            
+            <td>
+                <%= button_to  "목록", {:action => "listSpecificPageWork", :current_page => @current_page, :searchStr => @searchStr} ,class: "btn btn-large btn-primary" %>
+            </td>        
+        </tr>
+    </table>
+    
+    <% end %>
+</table>
+
+
+
+

@@ -7,7 +7,7 @@ gem 'sqlite3', '1.3.5'
 # gem 'ruby-oci8'
 # gem 'activerecord-oracle_enhanced-adapter'
 
-#gem 'bootstrap-sass', '2.0.0'
+gem 'bootstrap-sass', '2.0.4'
 
 # Gems used only for assets and not required
 # in production environments by default.

@@ -1,0 +1,79 @@
+﻿RESTful 처리
+
+* Rails 에서 RESTful web service를 제공하는법
+
+resources :my_rails_board_rows
+
+그리고 Rails의 RESTful 관례에 따라, MyRailsBoardRowsController 을 참조하므로,
+새로 controller를 생성해야함.
+
+rails generate controller MyRailsBoardRows
+
+명시적으로 view를 지정. => render
+
+	def new
+        # 새로운 게시물 생성, 명시적으로 view를 지정한다. (기본적으로 new.html.erb를 참조함)
+
+        # model객체를 전달..
+
+        render 'show_write_form'
+    end
+
+    view에서 form_for 로 폼 작성,post 전달되고,
+
+	def create
+        # 글쓰기 등록
+        # params.each do |key,value|
+        #    Rails.logger.warn "Param #{key}: #{value}"
+        # end
+        # Parameters: {"utf8"=>"✓", "authenticity_token"=>"TZ80O75xu52E0S3MXA49uTEkOdDMJE38INMRDIuVZOU=", "my_rails_board_row"=>{"name"=>"ggg", "mail"=>"ggg", "subject"=>"ggg", "memo"=>"ggg"}, "commit"=>"등록"}
+
+        @rowData = MyRailsBoardRow.new(params[:my_rails_board_row])
+
+        if @rowData.save
+          redirect_to '/'
+        else
+          render 'new'
+        end
+    end
+
+
+내용보기:
+
+     <a href="/my_rails_board_rows/<%=boardRow.id%>?current_page=<%=@current_page%>&searchStr=None" title="<%=boardRow.memo%>"><%=boardRow.subject %>
+변경..
+
+
+
+내용수정:
+function boardmodify()
+    {
+        location.href='/my_rails_board_rows/<%=@id%>/edit?current_page=<%=@current_page%>&searchStr=<%=@searchStr%>';
+    }
+
+
+
+<%= link_to 'approve', application_path(:id => resume.id, :resume => {:status => "approved"}), :method => :put %>
+
+
+* 내용삭제
+current_page, searchStr 인자 추가로 받음
+
+link_to, button_to
+
+<%= button_to '삭제', url_for(:action => 'destroy',:id => @rowData.id, :current_page => @current_page, :searchStr => @searchStr ), :confirm => 'Are you sure?', :method => :delete %>
+
+<%= button_to  "삭제", my_rails_board_row_path(:current_page => @current_page, :searchStr => @searchStr), :confirm => 'Are you sure?', :method=> :delete %>
+
+
+Started DELETE "/my_rails_board_rows/19?current_page=1&searchStr=None" for 127.0.0.1 at 2012-08-29 16:54:41 +0900
+Processing by MyRailsBoardRowsController#destroy as HTML
+  Parameters: {"authenticity_token"=>"TZ80O75xu52E0S3MXA49uTEkOdDMJE38INMRDIuVZOU=", "current_page"=>"1", "searchStr"=>"None", "id"=>"19"}
+current_page: 1
+  [1m[36mMyRailsBoardRow Load (0.0ms)[0m  [1mSELECT "my_rails_board_rows".* FROM "my_rails_board_rows" WHERE "my_rails_board_rows"."id" = ? LIMIT
+
+<% provide(:link2, '/my_rails_board_rows/<%=boardRow.id%>?current_page=<%=@pageForView%>&searchStr=<%=@searchStr%>') %>
+
+* View 정리
+listSpecificPageWork
+listSearchedSpecificPageWork 을 하나로 정리...

@@ -1,1 +1,25 @@
 Ruby on Rails sample message board - More Rails way !!
+
+- RESRful
+- View manipulation with partial
+- bootstrap 적용
+
+Todo:
+- Validation
+- BDD using RSpec
+- asset , cofee script
+
+
+D:\kojh_data\Dev\Ruby_Dev\RailsBoard>rake routes
+                        root        /                                       my_rails_board_rows#index
+         my_rails_board_rows GET    /my_rails_board_rows(.:format)          my_rails_board_rows#index
+                             POST   /my_rails_board_rows(.:format)          my_rails_board_rows#create
+      new_my_rails_board_row GET    /my_rails_board_rows/new(.:format)      my_rails_board_rows#new
+     edit_my_rails_board_row GET    /my_rails_board_rows/:id/edit(.:format) my_rails_board_rows#edit
+          my_rails_board_row GET    /my_rails_board_rows/:id(.:format)      my_rails_board_rows#show
+                             PUT    /my_rails_board_rows/:id(.:format)      my_rails_board_rows#update
+                             DELETE /my_rails_board_rows/:id(.:format)      my_rails_board_rows#destroy
+        listSpecificPageWork        /listSpecificPageWork(.:format)         my_rails_board_rows#listSpecificPageWork
+           searchWithSubject        /searchWithSubject(.:format)            my_rails_board_rows#searchWithSubject
+listSearchedSpecificPageWork        /listSearchedSpecificPageWork(.:format) my_rails_board_rows#listSearchedSpecificPageWork
+              EditViaPostReq        /EditViaPostReq(.:format)               my_rails_board_rows#EditViaPostReq
