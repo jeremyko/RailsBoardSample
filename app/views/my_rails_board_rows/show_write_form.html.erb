@@ -4,14 +4,14 @@
 <table cellspacing = 0 cellpadding = 5 border = 1 width=500>
 
     <%= form_for(@rowData) do |f| %>    
-        
-    <%= render :partial => "rowDataInput", :locals => { :f => f } %>
+        <%= render 'shared/error_messages' %>  
+        <%= render :partial => "rowDataInput", :locals => { :f => f } %>
     
-    <tr>
-        <td colspan="2">
-            <%= f.submit "등록", class: "btn btn-large btn-primary" %>
-        </td>    
-    </tr>
+        <tr>
+            <td colspan="2">
+                <%= f.submit "등록", class: "btn btn-large btn-primary" %>
+            </td>    
+        </tr>
     
     <% end %>
 </table>

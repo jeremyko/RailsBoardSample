@@ -59,7 +59,7 @@ class MyRailsBoardRowsController < ApplicationController
         if @rowData.save          
           redirect_to '/'
         else
-          render 'new'
+          render 'show_write_form'
         end
     end
 
@@ -102,7 +102,7 @@ class MyRailsBoardRowsController < ApplicationController
             url = '/listSpecificPageWork?current_page=' + @current_page+'&searchStr='+@searchStr
             redirect_to url     
         else
-            render 'edit'
+            render 'update'
         end        
     end
     #--------------------------------------------------------------------------#
