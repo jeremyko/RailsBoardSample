@@ -47,6 +47,10 @@ class MyRailsBoardRowsController < ApplicationController
         render 'show_write_form'
     end
     #--------------------------------------------------------------------------#
+    def cancelWrite
+        redirect_to '/'
+    end
+    #--------------------------------------------------------------------------#
     def create
         # 글쓰기 등록
         # params.each do |key,value|
@@ -118,15 +122,22 @@ class MyRailsBoardRowsController < ApplicationController
     def searchWithSubject
         
         @searchStr = params[:searchStr]
-        Rails.logger.debug "***** @searchStr:" + @searchStr
-                
+                        
         url = '/listSpecificPageWork?searchStr=' + @searchStr +'&current_page=1'
-        redirect_to url
+        Rails.logger.debug "***** url:" + url
+        
+        uri = URI.encode(url.strip)         
+        Rails.logger.debug uri
+        
+        redirect_to uri
     end    
     #--------------------------------------------------------------------------#
     def listSpecificPageWork
         
-        @searchStr = params[:searchStr]
+        @searchStr = URI.decode(params[:searchStr])   
+        # @searchStr = params[:searchStr]
+        Rails.logger.debug "listSpecificPageWork: @searchStr=" + @searchStr
+        
         @current_page = params[:current_page]         
         
         Rails.logger.debug "!!! searchStr: #{@searchStr}"     

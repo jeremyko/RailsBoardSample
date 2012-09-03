@@ -51,15 +51,24 @@ textarea
   resize: vertical;  
 }
 
-input, select, .uneditable-input 
+input
 {
   border: 1px solid #bbb;
   width: 100%;
   padding: 5px;
   height: auto;
   margin-bottom: 5px;
-  @include box_sizing;   
-  
+  @include box_sizing;  
+}
+
+select, .uneditable-input 
+{
+  border: 1px solid #bbb;
+  width: 100%;
+  padding: 5px;
+  height: auto;
+  margin-bottom: 5px;
+  @include box_sizing;
 }
 
 #error_explanation 

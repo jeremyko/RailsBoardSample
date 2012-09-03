@@ -7,8 +7,6 @@ Ruby on Rails sample message board - More Rails way !!
 
 Todo:
 - BDD using RSpec
-- asset , cofee script
-
 
 D:\kojh_data\Dev\Ruby_Dev\RailsBoard>rake routes
                         root        /                                       my_rails_board_rows#index

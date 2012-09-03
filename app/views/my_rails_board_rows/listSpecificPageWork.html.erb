@@ -58,17 +58,25 @@
 </table>
 
 <% if @searchStr == 'None' %>
+    <form name="searchf" method="post" action="/searchWithSubject/"> 
     <table width=700>
-        <tr>
-            <td><input type=button class="btn btn-large btn-primary" value="글쓰기"  OnClick="window.location='/my_rails_board_rows/new'">    
-            </td>
-
-            <td><form name=searchf method=post action="/searchWithSubject/"> 
-                <p align=right><input type=text name=searchStr size=50  maxlength=50>
-                <input type=submit class="btn btn-large btn-primary" value="글찾기"></p>
-            </td>
-        </tr>
+        <tbody>
+            <tr>
+                <td valign="center">
+                    <p align="left"><input class="btn btn-large btn-primary" value="글쓰기" onclick="window.location='/my_rails_board_rows/new'"  type="button"></p>
+                </td>
+                <td valign="right">
+                    
+                        <p align="right"><input name="searchStr" size="30" maxlength="50" type="text"></p>
+                    
+                </td>
+                <td valign="center">
+                    <p align="right"><input class="btn btn-large btn-primary" value="글찾기" type="submit"></p>
+                </td>
+            </tr>
+        </tbody>
     </table>
+    </form>
 <% else %>
     <table width=700>
         <tr>
