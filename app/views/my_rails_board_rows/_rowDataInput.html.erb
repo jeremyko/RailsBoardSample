@@ -1,16 +1,32 @@
     <tr>
         <td><b><%= f.label :name %></b></td>
-        <td><%= f.text_field :name %><br /></td>
+        <% if @readOnlyFlag == 1 %>
+            <td><%= f.text_field :name,:readonly => true %><br /></td>
+        <% else %>
+            <td><%= f.text_field :name %><br /></td>            
+        <% end %>
     </tr>
     <tr>
         <td><b><%= f.label :mail %></b></td>
-        <td><%= f.text_field :mail %><br /></td>
+        <% if @readOnlyFlag == 1 %>
+            <td><%= f.text_field :mail,:readonly => true %><br /></td>
+        <% else %>
+            <td><%= f.text_field :mail %><br /></td>            
+        <% end %>        
     </tr>
     <tr>
         <td><b><%= f.label :subject %></b></td>
-        <td><%= f.text_field :subject %><br /></td>
+        <% if @readOnlyFlag == 1 %>
+            <td><%= f.text_field :subject,:readonly => true %><br /></td>
+        <% else %>
+            <td><%= f.text_field :subject %><br /></td>            
+        <% end %>        
     </tr>
     <tr>
         <td><b><%= f.label :memo %></b></td>
-        <td><%= f.text_field :memo %><br /></td>
+        <% if @readOnlyFlag == 1 %>
+            <td><%= f.text_area :memo,:readonly => true %><br /></td>
+        <% else %>
+            <td><%= f.text_area :memo %><br /></td>            
+        <% end %>        
     </tr>

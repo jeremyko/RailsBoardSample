@@ -1,5 +1,7 @@
 @import "bootstrap";
 
+$grayMediumLight: #eaeaea;
+
 /* -------------------------------------------- */
 /* universal */
 
@@ -9,14 +11,13 @@ html {
 
 body {
   padding-top: 60px;
+  background-color:$grayMediumLight;
+
+  /*background-image:url('paper.gif');*/
 }
 
 section {
   overflow: auto;
-}
-
-textarea {
-  resize: vertical;
 }
 
 .center {
@@ -30,8 +31,6 @@ textarea {
 /* -------------------------------------------- */
 /* mixins, variables, etc. */
 
-$grayMediumLight: #eaeaea;
-
 @mixin box_sizing {
   -moz-box-sizing: border-box; 
   -webkit-box-sizing: border-box; 
@@ -40,47 +39,40 @@ $grayMediumLight: #eaeaea;
 
 /* -------------------------------------------- */
 /* forms */
-input, textarea, select, .uneditable-input {
+textarea
+{
   border: 1px solid #bbb;
   width: 100%;
-  padding: 10px;
-  height: auto;
-  margin-bottom: 15px;
+  padding: 5px;
+  height: 100px;
+  margin-bottom: 5px;
   @include box_sizing;
+
+  resize: vertical;  
 }
 
-#error_explanation {
+input, select, .uneditable-input 
+{
+  border: 1px solid #bbb;
+  width: 100%;
+  padding: 5px;
+  height: auto;
+  margin-bottom: 5px;
+  @include box_sizing;   
+  
+}
+
+#error_explanation 
+{
   color: #f00;
   ul {
     list-style: none;
-    margin: 0 0 18px 0;
+    margin: 0 0 5px 0;
   }
 }
 
 .field_with_errors {
   @extend .control-group;
-  @extend .error;
+  @extend .error;      
  }
 
- /* -------------------------------------------- */
-/* my_rails_board_rows */
-
-.my_rails_board_rows {
-  list-style: none;
-  margin: 10px 0 0 0;
-
-  li {
-    padding: 10px 0;
-    border-top: 1px solid #e8e8e8;
-  }
-}
-.content {
-  display: block;
-}
-
-aside {
-  textarea {
-    height: 100px;
-    margin-bottom: 5px;
-  }
-}

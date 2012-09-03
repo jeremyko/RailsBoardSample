@@ -1,29 +1,4 @@
 <% provide(:title, '글 수정'+@rowData.name) %>
-  
-<script language="javascript">
-
-	function writeCheck() 
-	{				
-	    var form = document.modifyform;
-	
-	    if( !form.subject.value )
-	    {
-	        alert( "제목을 적어주세요" );
-	        form.subject.focus();
-	        return;
-	    }
-	    if( !form.memo.value )
-	    {
-	        alert( "내용을 적어주세요" );
-	        form.memo.focus();
-	        return;
-	    }	
-	    
-	    form.submit();
-	}
-   
-</script>
-
 
 <table cellspacing = 0 cellpadding = 5 border = 1 width=500>
 
@@ -35,7 +10,9 @@
         <%= render 'shared/error_messages' %>  
         
         <!-- http://guides.rubyonrails.org/layouts_and_rendering.html -->
-        <%= render :partial => "rowDataInput", :locals => { :f => f } %>    
+        <% @readOnlyFlag = 0 %>       
+        <%= render :partial => "rowDataInput", :locals => { :f => f , :readOnlyFlag => @readOnlyFlag } %>
+        
             
         <table width="150">
             <tr>

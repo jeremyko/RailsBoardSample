@@ -3,9 +3,9 @@ Ruby on Rails sample message board - More Rails way !!
 - RESRful
 - View manipulation with partial
 - bootstrap 적용
+- Validation
 
 Todo:
-- Validation
 - BDD using RSpec
 - asset , cofee script
 
