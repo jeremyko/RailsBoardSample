@@ -46,10 +46,7 @@ class MyRailsBoardRowsController < ApplicationController
         @rowData = MyRailsBoardRow.new 
         render 'show_write_form'
     end
-    #--------------------------------------------------------------------------#
-    def cancelWrite
-        redirect_to '/'
-    end
+    
     #--------------------------------------------------------------------------#
     def create
         # 글쓰기 등록
