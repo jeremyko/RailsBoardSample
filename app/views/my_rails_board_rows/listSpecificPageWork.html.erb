@@ -21,8 +21,8 @@
             <td width=50><p align=center><%=boardRow.id%></p></td>
             <td width=100><p align=center><%=boardRow.name%></p></td>                
             <td width=320>
-                <p align=center>
-                    <a href="/my_rails_board_rows/<%=boardRow.id%>?current_page=<%=@current_page%>&searchStr=<%=@searchStr%>" title="<%=boardRow.memo%>"><%=boardRow.subject %> 
+                <p align=center>                    
+                    <%= link_to boardRow.subject, my_rails_board_row_path(:id => boardRow.id, :current_page=>@current_page, :searchStr=>@searchStr), :method => :get %>
                 </p>
             </td>                      
             <td width=100><p align=center><%=boardRow.created_at%></p></td>

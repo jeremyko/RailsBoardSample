@@ -1279,6 +1279,13 @@ input
 
 정상적으로 입력후 등록 버튼을 누르면 저장이 될것이다.
 
+이제 글 조회를 위한 기능을 처리해보자. 메인 뷰에서 글 제목을 선택사, 다음 link로 이동하게 된다.
+
+<a href="/my_rails_board_rows/<%=boardRow.id%>?current_page=<%=@current_page%>&searchStr=<%=@searchStr%>" title="<%=boardRow.memo%>"><%=boardRow.subject %> 
+or
+<%= link_to boardRow.subject, my_rails_board_row_path(:id => boardRow.id, :current_page=>@current_page, :searchStr=>@searchStr), :method => :get %>
+
+
 * BDD using RSpec
 
 

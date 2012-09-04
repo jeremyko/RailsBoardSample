@@ -29,6 +29,7 @@ class MyRailsBoardRowsController < ApplicationController
         
         # 좀더 RESTful 
         @searchStr = 'None'
+        @current_page = '1'
         @totalCnt = MyRailsBoardRow.all.count                  
         @totalPageList = getTotalPageList( @totalCnt, rowsPerPage)        
         @boardList = 
