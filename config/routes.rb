@@ -6,7 +6,7 @@ RailsBoard::Application.routes.draw do
 
     match '/listSpecificPageWork',  to: 'my_rails_board_rows#listSpecificPageWork'    
     match '/searchWithSubject',  to: 'my_rails_board_rows#searchWithSubject'        
-    match '/EditViaPostReq',  to: 'my_rails_board_rows#EditViaPostReq'       
+    match '/EditAdditionalParams',  to: 'my_rails_board_rows#EditAdditionalParams'       
 end
 
 

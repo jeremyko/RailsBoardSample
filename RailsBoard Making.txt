@@ -861,7 +861,7 @@ class MyRailsBoardRowsController < ApplicationController
         redirect_to my_rails_board_rows_path
     end    
     
-    def EditViaPostReq
+    def EditAdditionalParams
         # 내용 수정을 위해 내용 출력 구현
         @id = params[:id]
         @current_page = params[:current_page]
@@ -923,7 +923,7 @@ DeleteSpecificRow               => destroy
 listSearchedSpecificPageWork    => 삭제됨,listSpecificPageWork로 통합
 
 다소 중복되었던 기능 통합을 위해 listSearchedSpecificPageWork 메서드는 listSpecificPageWork 로 통합되었다.
-이전 예제에서는 컨트롤러의 action 명에 맞는 view template 를 자동으로 찾아갈수 있게끔 처리했지만(rails 규칙), 이제 action명이 RESTful 한 것으로 변경되었으므로, render 를 이용해서 명시적으로 뷰를 지정해 준다. 그런데 EditViaPostReq action은 왜 사용했을까? RESTful 구현을 위해서는 edit 라는 action을 정의해야 할것 같은데 말이다. 이것은 나중에 보게 되겠지만, 뷰에서 button_to 를 이용해서 변경할 내용을 가져오게 처리했기 때문이다. 나중에 뷰를 작성할때 다시 알아보기로 하고, 일단은 edit를 RESTful하게 처리하려면 GET방식으로 호출을 해야함을 기억하자 (위 < Table 1 RESTful URI > 도표를 참조). 그리고 이전 예제와 비교시 중요한 차이점은 새로운 게시물을 생성할때 모델을 생성해서 넘긴다는 점이다.
+이전 예제에서는 컨트롤러의 action 명에 맞는 view template 를 자동으로 찾아갈수 있게끔 처리했지만(rails 규칙), 이제 action명이 RESTful 한 것으로 변경되었으므로, render 를 이용해서 명시적으로 뷰를 지정해 준다. 그리고 이전 예제와 비교시 중요한 차이점은 새로운 게시물을 생성할때 모델을 생성해서 넘긴다는 점이다.
 즉, @rowData = MyRailsBoardRow.new 이부분이다. 이전 예제에서는 신규 작성 화면에서 넘겨준 내용을 컨트롤러에서 찾아서 새로운 모델을 생성해서 저장했었다. 이부분을 모델을 먼저 생성해서 뷰에 전달하고 돌려받는 식으로 깔끔하게 처리할수 있게 변경한 것이다. 
 
 그럼 새로운 글을 작성하기 위한 뷰를 정의해보자. 
@@ -1267,7 +1267,7 @@ input
   @extend .error;      
 }
 
-* Test
+* Test  
 여기까지 작업후, 테스트를 해본다. 서버를 기동시킨후, localhost:3000 로 가보면 화면이 약간 이쁘게 변한것을 볼수 있을것이다. 
 그림 1
 
@@ -1279,147 +1279,82 @@ input
 
 정상적으로 입력후 등록 버튼을 누르면 저장이 될것이다.
 
-이제 글 조회를 위한 기능을 처리해보자. 메인 뷰에서 글 제목을 선택사, 다음 link로 이동하게 된다.
+이제 글 조회를 위한 기능을 처리해보자. 메인 뷰에서 글 제목을 선택시, 소스 코드상에는 다음 link로 이동하게 처리하고 있다.
 
 <a href="/my_rails_board_rows/<%=boardRow.id%>?current_page=<%=@current_page%>&searchStr=<%=@searchStr%>" title="<%=boardRow.memo%>"><%=boardRow.subject %> 
-or
+혹은 다음처럼 작성해도 무방.
 <%= link_to boardRow.subject, my_rails_board_row_path(:id => boardRow.id, :current_page=>@current_page, :searchStr=>@searchStr), :method => :get %>
+
+GET방식, /my_rails_board_rows/글id 로 처리되므로, RESTful 처리에 의해, show 액션이 호출될것이다.
+게시물 보기를 위한 뷰, viewWork 를 작성해보자.
+
+* viewWork.html.erb
+<% provide(:title, '글보기'+@rowData.name) %>
+
+<table cellspacing = 0 cellpadding = 5 border = 1 width=500>
+    <%= form_for(@rowData) do |f| %>                    
+        <% @readOnlyFlag = 1 %>       
+        <%= render :partial => "rowDataInput", :locals => { :f => f , :readOnlyFlag => @readOnlyFlag } %>
+    <% end %>    
+</table>
+
+<table width="150">
+    <tr>            
+        <td><%= button_to '수정' , {:action => "EditAdditionalParams", :id => @id, :current_page => @current_page, :searchStr => @searchStr} ,class: "btn btn-large btn-primary" %></td>
+
+        <td><%= button_to  "삭제", my_rails_board_row_path(:current_page => @current_page, :searchStr => @searchStr),class: "btn btn-large btn-primary", :confirm => 'Are you sure?', :method=> :delete %></td>
+        
+        <td><%= button_to '목록' , {:action => "listSpecificPageWork", :current_page => @current_page, :searchStr => @searchStr} ,class: "btn btn-large btn-primary" %></td>
+    </tr>
+</table> 
+
+글 수정을 위해서 button_to 를 사용해서 EditAdditionalParams 액션을 호출하고 있다. 그런데 RESTful 구현을 위해서는 edit action을 호출해 줘야 할것 같은데 왜 EditAdditionalParams action을 사용하고 있는가? 이것은 edit 처리시, id 뿐 아니라, current_page, searchStr의 정보도 같이 전달해줘야 하는데, RESTful edit를 처리시에는 이러한 추가적인 parameter들을 전달할 방법을 찾을 수 없어서 이렇게 구현을 하였다. 즉 만약, 위에 수정 부분을 다음과 같이 변경한다면,
+<td><%= button_to  "수정", edit_my_rails_board_row_path(:id => @id, :current_page=> @current_page, :searchStr => @searchStr), class: "btn btn-large btn-primary",  :method=> :get  %>
+
+이결과로 만들어진 html소스를 보면 다음과 같다. 
+
+<td><form action="/my_rails_board_rows/8/edit?current_page=1&amp;searchStr=None" class="button_to" method="get"><div><input class="btn btn-large btn-primary" type="submit" value="수정" /></div></form>
+
+RESTful edit 경로에 추가적인 정보를 덧붙인 url을  만들어 주긴 하지만, 실제 RESTful edit 액션으로 전달되는 parameter는 id 뿐이다. 테스트를 해보니 나머지  current_page, searchStr 정보는 전달이 되지 않았다 (아마 내가 알지 못하는 방법이 있을지도 모르겠다). 그래서 RESTful edit를 포기하고 EditAdditionalParams 액션을 정의한 것이니 착오없길 바란다. 
+
+..................................................................................
+<td><%= link_to  "수정", edit_my_rails_board_row_path(:id => @id, :current_page=> @current_page, :searchStr => @searchStr), class: "btn btn-large btn-primary",  :method=> :get  %>
+        </td> 은 성공!!
+
+<td><%= button_to  "수정", edit_my_rails_board_row_path(:id => @id, :current_page=> @current_page, :searchStr => @searchStr), class: "btn btn-large btn-primary",  :method=> :get  %>
+        </td> 처리시 id param만이 전달되고 나머지는 무시된다..html소스상에는 분명 전달하게 만들어졌는데도 불구하고,, 이것 관련해서는 다음을 참조,,
+
+https://github.com/rails/rails/issues/2158
+If the button_to helper is used with :method => :get, the options parameters are appended to the action string and removed by the browser on submission.
+
+Apparently it is a known behavior, how browsers treat forms submitted via GET. This does not happen if the method in POST.
+
+
+button_to 를 사용하면 버튼을 클릭했을때의 action 
+http://apidock.com/rails/ActionView/Helpers/UrlHelper/button_to
+....................................................................................
+그런데 RESTful 구현을 위해서는 edit action을 호출해 줘야 할것 같은데 EditAdditionalParams action을 왜 사용하고 있다, 이것은 edit 처리시, id뿐 아니라, current_page, searchStr의 정보도 같이 전달해줘야 하는데, RESTful edit를 처리시에는 이러한 추가적인 parameter들을 전달할 방법을 찾을 수 없어서 이렇게 구현을 하였다(아마 내가 알지 못하는 방법이 있을지도 모르겠다)
+
 
 
 * BDD using RSpec
 
 
 
-////////////////////////////////////////////////////////////////////////////////
-class MyRailsBoardRowsController < ApplicationController
-    include ApplicationHelper
 
-    def index
-        # 좀더 RESTful
-        @searchStr = 'None'
-        @totalCnt = MyRailsBoardRow.all.count                  
-        @totalPageList = getTotalPageList( @totalCnt, rowsPerPage)        
-        @boardList = 
-                MyRailsBoardRow.find_by_sql ["select ID,SUBJECT,NAME, CREATED_AT, MAIL,MEMO,HITS \
-                    from MY_RAILS_BOARD_ROWS ORDER BY id desc limit %s offset 0", rowsPerPage ] 
 
-        render 'listSpecificPageWork' 
-    end
-    
-    def show
-        # 내용보기
-        @id = params[:id]
-        @current_page = params[:current_page] 
-        @searchStr= params[:searchStr] 
-                
-        # hits increase        
-        MyRailsBoardRow.increment_counter(:hits, @id  )
 
-        @rowData = MyRailsBoardRow.find(params[:id])      
 
-        render 'viewWork'  
-    end
-    
-    def new
-        # 새로운 게시물 생성, 명시적으로 view를 지정한다. (기본적으로 new.html.erb를 참조함)
-        @rowData = MyRailsBoardRow.new 
-        render 'show_write_form'
-    end
-    
-    def create
-        # 글쓰기 등록
-        @rowData = MyRailsBoardRow.new(params[:my_rails_board_row])
-                
-        if @rowData.save          
-          redirect_to '/'
-        else
-          render 'show_write_form'
-        end
-    end
-        
-    def edit
-        # 내용 수정을 위해 내용 출력하기        
-        @id = params[:id]
-        @current_page = params[:current_page]
-        @searchStr = params[:searchStr] 
-        @rowData = MyRailsBoardRow.find(params[:id])
-        render 'update'
-    end
 
-    def update
-        # 변경내용을 저장할때
-        @id = params[:id]
-        @current_page = params[:current_page]
-        @searchStr = params[:searchStr] 
-        
-        # Update DataBase
-        @rowData = MyRailsBoardRow.find(params[:id])      
 
-        if @rowData.update_attributes(params[:my_rails_board_row])
-            # Display Page => POST 요청은 redirection!
-            url = '/listSpecificPageWork?current_page=' + @current_page+'&searchStr='+@searchStr
-            redirect_to url     
-        else
-            render 'update'
-        end        
-    end
-    
-    def destroy
-        # 게시물 삭제
-        Rails.logger.debug "current_page: #{params[:current_page]}"     
 
-        MyRailsBoardRow.find(params[:id]).destroy
-                
-        redirect_to my_rails_board_rows_url
-    end    
-    
-    def EditViaPostReq
-        # 내용 수정을 위해 내용 출력하기        
-        @id = params[:id]
-        @current_page = params[:current_page]
-        @searchStr = params[:searchStr] 
-        @rowData = MyRailsBoardRow.find(params[:id])
 
-        render 'update'
-    end
 
-    def searchWithSubject
 
-        @searchStr = params[:searchStr]                        
-        url = '/listSpecificPageWork?searchStr=' + @searchStr +'&current_page=1'
-        Rails.logger.debug "***** url:" + url
-        
-        uri = URI.encode(url.strip) # 한글로 검색하는 경우를 위해, encode해준다.     
-        Rails.logger.debug uri
-        
-        redirect_to uri
-    end    
-    
-    def listSpecificPageWork
 
-        @searchStr = URI.decode(params[:searchStr])           
-        Rails.logger.debug "listSpecificPageWork: @searchStr=" + @searchStr
-        
-        @current_page = params[:current_page]         
-        
-        Rails.logger.debug "!!! searchStr: #{@searchStr}"     
-                                
-        if @searchStr == 'None'
-            @totalCnt = MyRailsBoardRow.all.count                  
-            @totalPageList = getTotalPageList( @totalCnt, rowsPerPage)
-            #sqlite3         
-            @boardList = 
-                MyRailsBoardRow.find_by_sql ["select ID,SUBJECT,NAME, CREATED_AT, MAIL,MEMO,HITS \
-                    from MY_RAILS_BOARD_ROWS ORDER BY id desc limit %s offset %s", 
-                    rowsPerPage, @current_page.to_i ==1 ? 0 : 2*(@current_page.to_i-1) ] 
-        else
-            # 검색처리
-            @totalCnt = MyRailsBoardRow.where("subject LIKE ?","%#{@searchStr}%").count() 
-            @totalPageList = getTotalPageList( @totalCnt, rowsPerPage)
-            @boardList = 
-                MyRailsBoardRow.find_by_sql [
-            "select ID,SUBJECT,NAME, CREATED_AT, MAIL,MEMO,HITS from MY_RAILS_BOARD_ROWS where subject like '%%%s%%' ORDER BY id desc
-             limit %s offset %s", @searchStr,rowsPerPage, @current_page.to_i ==1 ? 0 : 2*(@current_page.to_i-1) ] 
-         end
-    end
-end
+
+
+
+
+
+

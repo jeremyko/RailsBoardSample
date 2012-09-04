@@ -77,15 +77,19 @@ class MyRailsBoardRowsController < ApplicationController
     end
     
     #--------------------------------------------------------------------------#    
-    # def edit
-    #     # 내용 수정을 위해 내용 출력하기, 현재 사용안함. EditViaPostReq 사용
-    #     # button_to 가 GET방식을 사용할수 없기 때문에.
-    #     @id = params[:id]
-    #     @current_page = params[:current_page]
-    #     @searchStr = params[:searchStr] 
-    #     @rowData = MyRailsBoardRow.find(params[:id])
-    #     render 'update'
-    # end
+    def edit
+        # 내용 수정을 위해 내용 출력하기
+        @id = params[:id]
+        @current_page = params[:current_page]
+        @searchStr = params[:searchStr] 
+
+        Rails.logger.debug @id
+        Rails.logger.debug @current_page
+        Rails.logger.debug @searchStr
+
+        @rowData = MyRailsBoardRow.find(params[:id])
+        render 'update'
+    end
 
     #--------------------------------------------------------------------------#
     def update
@@ -119,16 +123,16 @@ class MyRailsBoardRowsController < ApplicationController
         # redirect_to my_rails_board_rows_url
         redirect_to my_rails_board_rows_path
     end    
-    #--------------------------------------------------------------------------#        
-    # buton_to 를 사용하기 위해서 .. POST로 요청되기 때문..
-    # edit action은 GET인 경우만 가능함..
-    def EditViaPostReq                
+    #--------------------------------------------------------------------------#           
+    def EditAdditionalParams                
         @id = params[:id]
         @current_page = params[:current_page]
         @searchStr = params[:searchStr] 
-
+        Rails.logger.debug @id
+        Rails.logger.debug @current_page
+        Rails.logger.debug @searchStr
+        
         @rowData = MyRailsBoardRow.find(params[:id])
-
         render 'update'
     end    
     #--------------------------------------------------------------------------#

@@ -12,10 +12,9 @@
         <!-- http://guides.rubyonrails.org/layouts_and_rendering.html -->
         <% @readOnlyFlag = 0 %>       
         <%= render :partial => "rowDataInput", :locals => { :f => f , :readOnlyFlag => @readOnlyFlag } %>
-        
-            
+
         <table width="150">
-            <tr>
+            <tr>                
                 <td>
                     <%= f.submit "재등록", class: "btn btn-large btn-primary" %> 
                 </td>
