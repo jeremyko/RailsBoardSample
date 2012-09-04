@@ -2,18 +2,13 @@
 
 $grayMediumLight: #eaeaea;
 
-/* -------------------------------------------- */
-/* universal */
-
 html {
   overflow-y: scroll;
 }
 
 body {
   padding-top: 60px;
-  background-color:$grayMediumLight;
-
-  /*background-image:url('paper.gif');*/
+  background-color:$grayMediumLight;  
 }
 
 section {
@@ -28,16 +23,12 @@ section {
   margin-bottom: 10px;
 }
 
-/* -------------------------------------------- */
-/* mixins, variables, etc. */
-
 @mixin box_sizing {
   -moz-box-sizing: border-box; 
   -webkit-box-sizing: border-box; 
   box-sizing: border-box;
 }
 
-/* -------------------------------------------- */
 /* forms */
 textarea
 {
@@ -61,17 +52,7 @@ input
   @include box_sizing;  
 }
 
-select, .uneditable-input 
-{
-  border: 1px solid #bbb;
-  width: 100%;
-  padding: 5px;
-  height: auto;
-  margin-bottom: 5px;
-  @include box_sizing;
-}
-
-#error_explanation 
+#error_explanation
 {
   color: #f00;
   ul {
@@ -80,8 +61,8 @@ select, .uneditable-input
   }
 }
 
-.field_with_errors {
+.field_with_errors 
+{
   @extend .control-group;
   @extend .error;      
- }
-
+}

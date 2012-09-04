@@ -14,8 +14,9 @@
         <!-- RESTful : 수정은 GET방식으로 처리해야함.
         하지만  button_to 는 method에는 GET이 없음..
         http://stackoverflow.com/questions/8684467/button-to-with-get-method-option-in-rails 
-
-        EditViaPostReq 사용으로, javascript:boardmodify 을 제거함.
+        
+        edit action을 설정하면, action="/my_rails_board_rows/39/edit?current_page=&amp;searchStr=None" 으로 생성됨.. => 오류!
+        EditViaPostReq 사용으로, javascript:boardmodify 을 제거함.        
         -->                
         <td><%= button_to '수정' , {:action => "EditViaPostReq",:id=>@id, :current_page => @current_page, :searchStr => @searchStr} ,class: "btn btn-large btn-primary" %>
         </td>

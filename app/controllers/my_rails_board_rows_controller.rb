@@ -22,9 +22,20 @@ class MyRailsBoardRowsController < ApplicationController
 
     #--------------------------------------------------------------------------#
     def index
-        url = '/listSpecificPageWork?current_page=1&searchStr=None'
-        Rails.logger.debug "!!! index url: #{url}"     
-        redirect_to url       
+
+        # url = '/listSpecificPageWork?current_page=1&searchStr=None'
+        # Rails.logger.debug "!!! index url: #{url}"     
+        # redirect_to url       
+        
+        # 좀더 RESTful 
+        @searchStr = 'None'
+        @totalCnt = MyRailsBoardRow.all.count                  
+        @totalPageList = getTotalPageList( @totalCnt, rowsPerPage)        
+        @boardList = 
+                MyRailsBoardRow.find_by_sql ["select ID,SUBJECT,NAME, CREATED_AT, MAIL,MEMO,HITS \
+                    from MY_RAILS_BOARD_ROWS ORDER BY id desc limit %s offset 0", rowsPerPage ] 
+
+        render 'listSpecificPageWork'
     end
     #--------------------------------------------------------------------------#
     def show
@@ -63,30 +74,17 @@ class MyRailsBoardRowsController < ApplicationController
           render 'show_write_form'
         end
     end
-
-    #--------------------------------------------------------------------------#        
-    # buton_to 를 사용하기 위해서 .. POST로 요청되기 때문..
-    # edit action은 GET인 경우만 가능함..
-    def EditViaPostReq
-        # 내용 수정을 위해 내용 출력하기        
-        @id = params[:id]
-        @current_page = params[:current_page]
-        @searchStr = params[:searchStr] 
-
-        @rowData = MyRailsBoardRow.find(params[:id])
-
-        render 'update'
-    end
-
+    
     #--------------------------------------------------------------------------#    
-    def edit
-        # 내용 수정을 위해 내용 출력하기        
-        @id = params[:id]
-        @current_page = params[:current_page]
-        @searchStr = params[:searchStr] 
-        @rowData = MyRailsBoardRow.find(params[:id])
-        render 'update'
-    end
+    # def edit
+    #     # 내용 수정을 위해 내용 출력하기, 현재 사용안함. EditViaPostReq 사용
+    #     # button_to 가 GET방식을 사용할수 없기 때문에.
+    #     @id = params[:id]
+    #     @current_page = params[:current_page]
+    #     @searchStr = params[:searchStr] 
+    #     @rowData = MyRailsBoardRow.find(params[:id])
+    #     render 'update'
+    # end
 
     #--------------------------------------------------------------------------#
     def update
@@ -112,8 +110,25 @@ class MyRailsBoardRowsController < ApplicationController
         Rails.logger.debug "current_page: #{params[:current_page]}"     
 
         MyRailsBoardRow.find(params[:id]).destroy
-                
-        redirect_to my_rails_board_rows_url
+        
+        # 차이점        
+        # my_rails_board_rows_path => '/my_rails_board_rows'
+        # my_rails_board_rows_url  => 'http://localhost:3000/my_rails_board_rows' => full URI
+
+        # redirect_to my_rails_board_rows_url
+        redirect_to my_rails_board_rows_path
+    end    
+    #--------------------------------------------------------------------------#        
+    # buton_to 를 사용하기 위해서 .. POST로 요청되기 때문..
+    # edit action은 GET인 경우만 가능함..
+    def EditViaPostReq                
+        @id = params[:id]
+        @current_page = params[:current_page]
+        @searchStr = params[:searchStr] 
+
+        @rowData = MyRailsBoardRow.find(params[:id])
+
+        render 'update'
     end    
     #--------------------------------------------------------------------------#
     def searchWithSubject
