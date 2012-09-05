@@ -1309,35 +1309,100 @@ GET방식, /my_rails_board_rows/글id 로 처리되므로, RESTful 처리에 의
 </table> 
 
 글 수정을 위해서 button_to 를 사용해서 EditAdditionalParams 액션을 호출하고 있다. 그런데 RESTful 구현을 위해서는 edit action을 호출해 줘야 할것 같은데 왜 EditAdditionalParams action을 사용하고 있는가? 이것은 edit 처리시, id 뿐 아니라, current_page, searchStr의 정보도 같이 전달해줘야 하는데, RESTful edit를 처리시에는 이러한 추가적인 parameter들을 전달할 방법을 찾을 수 없어서 이렇게 구현을 하였다. 즉 만약, 위에 수정 부분을 다음과 같이 변경한다면,
-<td><%= button_to  "수정", edit_my_rails_board_row_path(:id => @id, :current_page=> @current_page, :searchStr => @searchStr), class: "btn btn-large btn-primary",  :method=> :get  %>
-
+<td><%= button_to  "수정", edit_my_rails_board_row_path(:id => @id), class: "btn btn-large btn-primary", :method=> :get  %>
 이결과로 만들어진 html소스를 보면 다음과 같다. 
+<td><form action="/my_rails_board_rows/8/edit" class="button_to" method="get"><div><input class="btn btn-large btn-primary" type="submit" value="수정" /></div></form>
+edit가 호출은 되는데 추가로 전달해줘야할 parameter 정보가 누락되게 된다. 그래서 혹시나 하고 다음처럼 해보면, 
+<td><%= button_to  "수정", edit_my_rails_board_row_path(:id => @id, :current_page=> @current_page, :searchStr => @searchStr), class: "btn btn-large btn-primary" %>
+html소스는 다음처럼 만들어지는데,
+<td><form action="/my_rails_board_rows/41/edit?current_page=1&amp;searchStr=None" class="button_to" method="post"><div><input class="btn btn-large btn-primary" type="submit" value="수정" /><input name="authenticity_token" type="hidden" value="bczaTatv1RFdtg8bsyrQ5RUELi1bobZhD7ZZAWjj6Dk=" /></div></form>
+화면에서 클릭시에는 다음과 같은 오류가 발생한다.
+No route matches [POST] "/my_rails_board_rows/41/edit"
 
-<td><form action="/my_rails_board_rows/8/edit?current_page=1&amp;searchStr=None" class="button_to" method="get"><div><input class="btn btn-large btn-primary" type="submit" value="수정" /></div></form>
+즉, RESTful 한 edit를 위해서는 Post방식이 아니라 Get방식을 사용해야 함을 나타낸다. button_to 는 기본적으로 post 를 사용하기 때문이다.
+그래서 다음처럼 method를 get으로 설정하고 다시 호출해보면, 
+<td><%= button_to  "수정", edit_my_rails_board_row_path(:id => @id, :current_page=> @current_page, :searchStr => @searchStr), class: "btn btn-large btn-primary",:method=> :get %>
+html소스는 다음처럼 만들어지는데,
+<td><form action="/my_rails_board_rows/41/edit?current_page=1&amp;searchStr=None" class="button_to" method="get"><div><input class="btn btn-large btn-primary" type="submit" value="수정3" /></div></form>
 
-RESTful edit 경로에 추가적인 정보를 덧붙인 url을  만들어 주긴 하지만, 실제 RESTful edit 액션으로 전달되는 parameter는 id 뿐이다. 테스트를 해보니 나머지  current_page, searchStr 정보는 전달이 되지 않았다 (아마 내가 알지 못하는 방법이 있을지도 모르겠다). 그래서 RESTful edit를 포기하고 EditAdditionalParams 액션을 정의한 것이니 착오없길 바란다. 
+보다시피 form action이 RESTful edit 경로에 추가적인 정보를 덧붙인 것으로 만들어져 버리기 때문에, 나머지 current_page, searchStr 정보는 제대로 전달이 되지 않았다. 
+button_to 사용을 안하고 직접 form 을 만들어서 hidden field 로 처리하면 가능할것이지만 그냥 RESTful routing은 사용안하는것으로 하고, 새로운 EditAdditionalParams action을 만들어서 button_to를 사용해서 GET방식으로 호출하였다. button_to 를 사용해서 RESTful edit path를 호출하면서 id 이외의 인자들을 전달하는 방법은 어떻게 하면 될지..? 아마 내가 알지 못하는 방법이 있을지도 모르겠다.  
+
+글 삭제를 위해서는 :method=> :delete 로 설정을 했는데, 실제 생성된 html은 다음과 같다.
+
+td><form action="/my_rails_board_rows/43?current_page=1&amp;searchStr=None" class="button_to" method="post"><div><input name="_method" type="hidden" value="delete" /><input class="btn btn-large btn-primary" data-confirm="Are you sure?" type="submit" value="삭제" /><input name="authenticity_token" type="hidden" value="bczaTatv1RFdtg8bsyrQ5RUELi1bobZhD7ZZAWjj6Dk=" /></div></form></td>
+
+웹브라우져는 DELETE 요청을 보낼수 없기 때문에 rails에서는 <input name="_method" type="hidden" value="delete" /> 과 같이 hidden field를 설정하고 post를 이용해서 delete요청을 전달하게 처리한다.
+
+그럼 글수정을 위한 뷰를 살펴보도록 하자. update.html.erb 파일을 생성하고 다음처럼 수정한다.
+
+* update.html.erb
+
+<% provide(:title, '글 수정'+@rowData.name) %>
+
+<table cellspacing = 0 cellpadding = 5 border = 1 width=500>
+
+    <%= form_for(@rowData) do |f| %>        
+        <input type=hidden name=id  value="<%=@id%>">    
+        <input type=hidden name=current_page  value="<%=@current_page%>">
+        <input type=hidden name=searchStr  value="<%=@searchStr%>">
+
+        <%= render 'shared/error_messages' %>                  
+        <% @readOnlyFlag = 0 %>       
+        <%= render :partial => "rowDataInput", :locals => { :f => f , :readOnlyFlag => @readOnlyFlag } %>
+
+        <table width="150">
+            <tr>                
+                <td>
+                    <%= f.submit "재등록", class: "btn btn-large btn-primary" %> 
+                </td>
+                
+                <td>
+                    <%= button_to  "목록", {:action => "listSpecificPageWork", :current_page => @current_page, :searchStr => @searchStr} ,class: "btn btn-large btn-primary" %>
+                </td>        
+            </tr>
+        </table>
+    
+    <% end %>
+</table>
+
+글 수정을 위한 RESTful uri 는 다음처럼 되어야함을 앞서의 표에서 확인할수 있을 것이다.
+
+PUT       /my_rails_board_rows/1      update   id 1 게시물 수정 작업 처리
+
+그럼 실제 html로 변환된 부분에서 이것을 확인해 보도록 하자.
+
+<form accept-charset="UTF-8" action="/my_rails_board_rows/43" class="edit_my_rails_board_row" id="edit_my_rails_board_row_43" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="_method" type="hidden" value="put" />...
+
+앞서의 delete와 마찬가지로 PUT 요청을 바로 처리할수 없기 때문에 폼의 hidden field를 만들어서 전달하고 있음을 알수 있다.
+
+
 
 ..................................................................................
-<td><%= link_to  "수정", edit_my_rails_board_row_path(:id => @id, :current_page=> @current_page, :searchStr => @searchStr), class: "btn btn-large btn-primary",  :method=> :get  %>
-        </td> 은 성공!!
+<td><%= button_to '1', edit_my_rails_board_row_path(@rowData,:current_page => @current_page, :searchStr => @searchStr),class: "btn btn-large btn-primary",  :method=> :get  %>
+<td><%= button_to '2', {:action => "edit",:id => @id, :current_page => @current_page, :searchStr => @searchStr} ,class: "btn btn-large btn-primary",  :method=> :get %></td>
+위 2개 는 모두 동일한 링크를 만들어준다. 
+<form action="/my_rails_board_rows/41/edit?current_page=1&amp;searchStr=None" class="button_to" method="get"><div><input class="btn btn-large btn-primary" type="submit" value="1" /></div></form>
+<form action="/my_rails_board_rows/41/edit?current_page=1&amp;searchStr=None" class="button_to" method="get"><div><input class="btn btn-large btn-primary" type="submit" value="2" /></div></form>
+하지만 id 이외 다른 인자들이 전달되지 않는다. => form 에서 원래 전달이 안되기 때문이다. !!!
 
-<td><%= button_to  "수정", edit_my_rails_board_row_path(:id => @id, :current_page=> @current_page, :searchStr => @searchStr), class: "btn btn-large btn-primary",  :method=> :get  %>
-        </td> 처리시 id param만이 전달되고 나머지는 무시된다..html소스상에는 분명 전달하게 만들어졌는데도 불구하고,, 이것 관련해서는 다음을 참조,,
+<td><%= link_to "수정", {:action => 'edit',:id => @id, :current_page => @current_page, :searchStr => @searchStr }, class: "btn btn-large btn-primary" %></td>
+<td><%= link_to "수정", {:action => 'edit',:id => @id, :current_page => @current_page, :searchStr => @searchStr }, { :class => 'btn btn-large btn-primary' } %></td>
+<td><%= link_to "수정", edit_my_rails_board_row_path(:id => @id, :current_page=> @current_page, :searchStr => @searchStr), class: "btn btn-large btn-primary",  :method=> :get  %></td>
+은 성공!! => 그런데 버튼에 글자가 수직으로 출력?
+
+<td><%= button_to  "수정", edit_my_rails_board_row_path(:id => @id, :current_page=> @current_page, :searchStr => @searchStr), class: "btn btn-large btn-primary",  :method=> :get  %></td> 
+처리시 id param만이 전달되고 나머지는 무시된다. 이것 관련해서는 다음을 참조,,
 
 https://github.com/rails/rails/issues/2158
 If the button_to helper is used with :method => :get, the options parameters are appended to the action string and removed by the browser on submission.
-
 Apparently it is a known behavior, how browsers treat forms submitted via GET. This does not happen if the method in POST.
-
-
-button_to 를 사용하면 버튼을 클릭했을때의 action 
-http://apidock.com/rails/ActionView/Helpers/UrlHelper/button_to
 ....................................................................................
-그런데 RESTful 구현을 위해서는 edit action을 호출해 줘야 할것 같은데 EditAdditionalParams action을 왜 사용하고 있다, 이것은 edit 처리시, id뿐 아니라, current_page, searchStr의 정보도 같이 전달해줘야 하는데, RESTful edit를 처리시에는 이러한 추가적인 parameter들을 전달할 방법을 찾을 수 없어서 이렇게 구현을 하였다(아마 내가 알지 못하는 방법이 있을지도 모르겠다)
-
 
 
 * BDD using RSpec
+
+이제 기본적인 글작성, 수정, 삭제, 조회, 목록 조회기능이 구현되었다.
 
 
 

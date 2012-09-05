@@ -10,10 +10,10 @@
 </table>
 
 <table width="150">
-    <tr>        
+    <tr>
         <td><%= button_to '수정' , {:action => "EditAdditionalParams", :id => @id, :current_page => @current_page, :searchStr => @searchStr} ,class: "btn btn-large btn-primary" %></td>
-        
-        <td><%= button_to  "삭제", my_rails_board_row_path(:current_page => @current_page, :searchStr => @searchStr),class: "btn btn-large btn-primary", :confirm => 'Are you sure?', :method=> :delete %>
+                
+        <td><%= button_to  "삭제", my_rails_board_row_path(:id => @id, :current_page => @current_page, :searchStr => @searchStr),class: "btn btn-large btn-primary", :confirm => 'Are you sure?', :method=> :delete %>
         </td>
         
         <td><%= button_to '목록' , {:action => "listSpecificPageWork", :current_page => @current_page, :searchStr => @searchStr} ,class: "btn btn-large btn-primary" %></td>

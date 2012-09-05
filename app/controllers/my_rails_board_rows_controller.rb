@@ -77,19 +77,19 @@ class MyRailsBoardRowsController < ApplicationController
     end
     
     #--------------------------------------------------------------------------#    
-    def edit
-        # 내용 수정을 위해 내용 출력하기
-        @id = params[:id]
-        @current_page = params[:current_page]
-        @searchStr = params[:searchStr] 
+    # def edit
+        # 내용 수정을 위해 내용 출력하기. EditAdditionalParams 를 대신 사용함.
+        # @id = params[:id]
+        # @current_page = params[:current_page]
+        # @searchStr = params[:searchStr] 
 
-        Rails.logger.debug @id
-        Rails.logger.debug @current_page
-        Rails.logger.debug @searchStr
+        # Rails.logger.debug @id
+        # Rails.logger.debug @current_page
+        # Rails.logger.debug @searchStr
 
-        @rowData = MyRailsBoardRow.find(params[:id])
-        render 'update'
-    end
+        # @rowData = MyRailsBoardRow.find(params[:id])
+        # render 'update'
+    # end
 
     #--------------------------------------------------------------------------#
     def update
@@ -150,13 +150,10 @@ class MyRailsBoardRowsController < ApplicationController
     end    
     #--------------------------------------------------------------------------#
     def listSpecificPageWork
-        
+        @current_page = params[:current_page]      
         @searchStr = URI.decode(params[:searchStr])   
-        # @searchStr = params[:searchStr]
+        
         Rails.logger.debug "listSpecificPageWork: @searchStr=" + @searchStr
-        
-        @current_page = params[:current_page]         
-        
         Rails.logger.debug "!!! searchStr: #{@searchStr}"     
         
         # 페이지를 가지고 범위 데이터를 조회한다 => raw SQL 사용함
